@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuizDOG</title>
+    <link rel="shortcut icon" href="cao.png" type="image/x-icon">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="Pontuacao">
+                <p class="noem">Pontuação:</p>
+
+                <div class="acr">
+                    <div class="separ">
+                        <div class="acerto">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="img-acr" fill="currentColor" class="bi bi-check-lg" viewBox="0 0 16 16">
+  <path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425z"/>
+</svg>
+
+                        <p class="txt-hed" id="acerto">0</p>
+                    </div>
+
+                    <div class="acerto">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="img-acr er" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+  <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+</svg>
+
+                        <p class="txt-hed" id="erro">0</p>
+                    </div>
+                    
+                    </div>
+
+                </div>
+            </div>
+
+    <header>
+
+        <div class="espc">
+            <div class="nav-bar">
+            <div class="img-logo">
+                <img src="https://tangerine-gnome-d0cdd5.netlify.app/1389234.ico" alt="" srcset="" class="logo">
+
+                <h1 class="nome">QuizDOG</h1>
+            </div>
+
+        </div>
+        </div>
+
+    </header>
+    
+    <div class="divona">
+        <div class="quiz">
+            <h1 class="quiz-tag">Quiz de raças de cachorros:</h1>
+        </div>
+        <div class="img-do-cachorro">
+            <div class="dog-container">
+      </div>
+      <img id="dog-image" src="" alt="Random Dog" class="imagem">
+        <div class="nome de">
+            <h1 class="text-cachorro">Qual é a raça do cachorro:</h1>
+            <input type="text" name="" id="guess-input" placeholder="Digite a raça..." class="input-cachorro">
+        </div>
+        <button id="guess-button" class="btn btn-adivinha">Adivinhar</button>
+        <button id="generate-button" class="btn btn-mudar">Mude de Cachorro</button>
+        <p id="result" class="tadada"></p>
+
+        </div>
+    </div>
+</body>
+<script src="script.js"></script>
+</html>
