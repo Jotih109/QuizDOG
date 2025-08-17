@@ -11,7 +11,16 @@ body{
 header{
     background-color: rgb(255, 192, 202);
     padding: 0.5em;
-    margin-bottom: 2em;
+    margin-bottom: 1em;
+}
+
+footer{
+    background-color: rgb(255, 192, 202);
+    padding: 0.5em;
+    color: white;
+    font-family: monospace;
+    margin-top: 1em;
+    font-size: 1.2em;
 }
 
 input:focus {
@@ -112,9 +121,35 @@ button:focus {
 }
 
 .quiz-tag, .text-cachorro{
-    text-decoration: overline;
+    background-color: rgb(255, 192, 202);
+    color: white;
+    margin-bottom: 0.3em;
+    margin-inline: 30vw;
+    border-radius: 0.2em;
+}
+
+.baixo{
+    display: flex;
+    flex-direction: column;
+    margin-inline: 40vw;
 }
 
 .btn{
-    
+    border: solid 1px transparent;
+    background-color: rgb(255, 104, 104);
+    color: white;
+    font-family: fantasy;
+    font-size: 1.6em;
+    border-radius: 0.2em;
+    margin-bottom: 0.2em;
+    transition: 0.3s;
+}
+
+.btn:hover{
+    transition: 0.4s;
+    opacity: 90%;
+}
+
+.btn-adivinha{
+    background-color: rgb(122, 122, 255);
 }

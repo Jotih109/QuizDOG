@@ -32,7 +32,7 @@ guessButton.addEventListener('click', () => {
     setTimeout(() => {
         resultText.textContent = '';
         fetchRandomDogImage();
-    }, 2000);
+    }, 2500);
 });
 
 generateButton.addEventListener('click', () => {
