@@ -1,1 +1,1 @@
-# infoDOG
+# QuizDOG
