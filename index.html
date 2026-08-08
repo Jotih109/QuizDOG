@@ -1,79 +1,151 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="QuizDOG - Teste seus conhecimentos e adivinhe as raças de cachorros neste quiz divertido e interativo!">
     <title>QuizDOG</title>
-    <link rel="shortcut icon" href="cao.png" type="image/x-icon">
-    <link rel="stylesheet" href="style.css">
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="assets/images/cao.png" type="image/png">
+
+    <!-- Design System CSS -->
+    <link rel="stylesheet" href="assets/css/style.css">
 </head>
+
 <body>
 
-    <div class="Pontuacao">
-                <p class="noem">Pontuação:</p>
+    <!-- Confetti Canvas -->
+    <canvas id="confetti-canvas"></canvas>
 
-                <div class="acr">
-                    <div class="separ">
-                        <div class="acerto">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="img-acr" fill="currentColor" class="bi bi-check-lg" viewBox="0 0 16 16">
-  <path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425z"/>
-</svg>
+    <!-- Top Navigation Header -->
+    <header class="header-nav">
+        <div class="header-container">
+            <a href="#" class="brand-logo" aria-label="QuizDOG Página Inicial">
+                <img src="assets/images/cao.png" alt="QuizDOG Logo" class="logo-img">
+                <span class="brand-name">QuizDOG</span>
+            </a>
 
-                        <p class="txt-hed" id="acerto">0</p>
+            <div class="header-actions">
+                <button id="sound-toggle" class="icon-btn" title="Alternar Som" aria-label="Alternar Som">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+                        <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="main-wrapper">
+
+        <!-- Scoreboard & Stats Card -->
+        <section class="stats-card" aria-label="Painel de Estatísticas">
+            <div class="stats-group">
+                <div class="stat-item" title="Acertos">
+                    <div class="stat-badge correct-bg">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="20 6 9 17 4 12" />
+                        </svg>
                     </div>
-
-                    <div class="acerto">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="img-acr er" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
-  <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
-</svg>
-
-                        <p class="txt-hed" id="erro">0</p>
+                    <div>
+                        <div class="stat-label">Acertos</div>
+                        <div class="stat-value" id="score-correct">0</div>
                     </div>
-                    
-                    </div>
+                </div>
 
+                <div class="stat-item" title="Erros">
+                    <div class="stat-badge wrong-bg">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="18" y1="6" x2="6" y2="18" />
+                            <line x1="6" y1="6" x2="18" y2="18" />
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="stat-label">Erros</div>
+                        <div class="stat-value" id="score-wrong">0</div>
+                    </div>
+                </div>
+
+                <div class="stat-item" title="Combo Atual">
+                    <div class="stat-badge streak-bg">🔥</div>
+                    <div>
+                        <div class="stat-label">Streak</div>
+                        <div class="stat-value" id="streak-count">0</div>
+                    </div>
+                </div>
+
+                <div class="stat-item" title="Maior Combo">
+                    <div class="stat-badge best-bg">🏆</div>
+                    <div>
+                        <div class="stat-label">Recorde</div>
+                        <div class="stat-value" id="best-streak">0</div>
+                    </div>
                 </div>
             </div>
 
-    <header>
+            <button id="reset-stats" class="reset-btn" title="Zerar Pontuação">Zerar Placar</button>
+        </section>
 
-        <div class="espc">
-            <div class="nav-bar">
-            <div class="img-logo">
-                <img src="https://tangerine-gnome-d0cdd5.netlify.app/1389234.ico" alt="" srcset="" class="logo">
+        <!-- Main Quiz Interface -->
+        <section class="quiz-card" aria-label="Área do Quiz">
+            <div class="quiz-header">
+                <h1 class="quiz-title">Qual é a raça do cachorro? 🐕</h1>
 
-                <h1 class="nome">QuizDOG</h1>
+                <div class="mode-selector">
+                    <button id="mode-choice" class="mode-btn active">Múltipla Escolha</button>
+                    <button id="mode-input" class="mode-btn">Digitação</button>
+                </div>
             </div>
 
-        </div>
-        </div>
+            <!-- Dog Photo Container -->
+            <div class="image-wrapper" id="image-container">
+                <div class="skeleton-loader" id="image-skeleton"></div>
+                <img id="dog-image" src="" alt="Foto de um cachorro" class="dog-img">
+            </div>
 
-    </header>
-    
-    <div class="divona">
-        <div class="quiz">
-            <h1 class="quiz-tag">Quiz de raças de cachorros:</h1>
-        </div>
-        <div class="img-do-cachorro">
-            <div class="dog-container">
-      </div>
-      <img id="dog-image" src="" alt="Random Dog" class="imagem">
-        <div class="nome de">
-            <h1 class="text-cachorro">Qual é a raça do cachorro:</h1>
-            <input type="text" name="" id="guess-input" placeholder="Digite a raça..." class="input-cachorro">
-        </div>
-        <div class="baixo">
-            <button id="guess-button" class="btn btn-adivinha">Adivinhar</button>
-            <button id="generate-button" class="btn btn-mudar">Mude de Cachorro</button>
-        </div>
-        <p id="result" class="tadada"></p>
+            <!-- Multiple Choice Grid -->
+            <div id="options-container" class="options-grid">
+                <!-- Option buttons generated dynamically via app.js -->
+            </div>
 
-        </div>
-    </div>
+            <!-- Text Input Guessing Box (Hidden by default) -->
+            <div id="text-input-container" class="text-input-box hidden">
+                <input type="text" id="guess-input" placeholder="Digite a raça (ex: Pastor Alemão, Golden Retriever)..."
+                    class="breed-input" autocomplete="off">
+                <button id="guess-button" class="submit-btn">Adivinhar</button>
+            </div>
 
-    <footer>
-        <p class="copy">&copy; By João Vitor Lamim dos Santos</p>
+            <!-- Feedback Message Area -->
+            <div id="feedback-msg" class="feedback-msg"></div>
+
+            <!-- Quiz Controls Bar -->
+            <div class="action-bar">
+                <button id="hint-button" class="btn-secondary">
+                    <span>💡</span> Obter Dica
+                </button>
+                <button id="next-button" class="btn-secondary">
+                    <span>🔄</span> Mudar Cachorro
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p class="footer-text">&copy; QuizDOG • Criado por <strong>João Vitor Lamim dos Santos</strong></p>
     </footer>
+
+    <!-- App Scripts -->
+    <script src="assets/js/sounds.js"></script>
+    <script src="assets/js/app.js"></script>
 </body>
-<script src="script.js"></script>
+
 </html>
