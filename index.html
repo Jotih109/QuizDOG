@@ -5,8 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description"
-        content="QuizDOG - Teste seus conhecimentos e adivinhe as raças de cachorros neste quiz divertido e interativo!">
-    <title>QuizDOG</title>
+        content="QuizDOG - Teste seus conhecimentos e adivinhe as raças de cachorros neste quiz interativo sem rolagem!">
+    <title>QuizDOG • Jogo das Raças</title>
 
     <!-- Favicon -->
     <link rel="shortcut icon" href="assets/images/cao.png" type="image/png">
@@ -20,17 +20,55 @@
     <!-- Confetti Canvas -->
     <canvas id="confetti-canvas"></canvas>
 
-    <!-- Top Navigation Header -->
+    <!-- Top Navigation Header with Integrated Scoreboard -->
     <header class="header-nav">
         <div class="header-container">
+            <!-- Brand Logo -->
             <a href="#" class="brand-logo" aria-label="QuizDOG Página Inicial">
                 <img src="assets/images/cao.png" alt="QuizDOG Logo" class="logo-img">
                 <span class="brand-name">QuizDOG</span>
             </a>
 
+            <!-- Compact Integrated Stats Bar -->
+            <div class="stats-compact" aria-label="Painel de Estatísticas">
+                <div class="stat-pill stat-correct" title="Total de Acertos">
+                    <span class="stat-icon">✓</span>
+                    <span class="stat-title">Acertos</span>
+                    <span class="stat-num" id="score-correct">0</span>
+                </div>
+
+                <div class="stat-pill stat-wrong" title="Total de Erros">
+                    <span class="stat-icon">✕</span>
+                    <span class="stat-title">Erros</span>
+                    <span class="stat-num" id="score-wrong">0</span>
+                </div>
+
+                <div class="stat-pill stat-streak" id="streak-pill" title="Sequência Atual">
+                    <span class="stat-icon">🔥</span>
+                    <span class="stat-title">Streak</span>
+                    <span class="stat-num" id="streak-count">0</span>
+                </div>
+
+                <div class="stat-pill stat-record" title="Maior Sequência de Acertos">
+                    <span class="stat-icon">🏆</span>
+                    <span class="stat-title">Recorde</span>
+                    <span class="stat-num" id="best-streak">0</span>
+                </div>
+
+                <button id="reset-stats" class="reset-link" title="Zerar Pontuação">Zerar</button>
+            </div>
+
+            <!-- Header Action Controls -->
             <div class="header-actions">
+                <button id="theme-toggle" class="icon-btn" title="Alternar Tema Claro/Escuro" aria-label="Alternar Tema">
+                    <svg id="theme-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                </button>
+
                 <button id="sound-toggle" class="icon-btn" title="Alternar Som" aria-label="Alternar Som">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
                         <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07" />
@@ -40,102 +78,73 @@
         </div>
     </header>
 
-    <!-- Main Content Area -->
+    <!-- Main Game Wrapper (Single Screen / No-Scroll) -->
     <main class="main-wrapper">
-
-        <!-- Scoreboard & Stats Card -->
-        <section class="stats-card" aria-label="Painel de Estatísticas">
-            <div class="stats-group">
-                <div class="stat-item" title="Acertos">
-                    <div class="stat-badge correct-bg">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                            <polyline points="20 6 9 17 4 12" />
-                        </svg>
-                    </div>
-                    <div>
-                        <div class="stat-label">Acertos</div>
-                        <div class="stat-value" id="score-correct">0</div>
-                    </div>
-                </div>
-
-                <div class="stat-item" title="Erros">
-                    <div class="stat-badge wrong-bg">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                            <line x1="18" y1="6" x2="6" y2="18" />
-                            <line x1="6" y1="6" x2="18" y2="18" />
-                        </svg>
-                    </div>
-                    <div>
-                        <div class="stat-label">Erros</div>
-                        <div class="stat-value" id="score-wrong">0</div>
-                    </div>
-                </div>
-
-                <div class="stat-item" title="Combo Atual">
-                    <div class="stat-badge streak-bg">🔥</div>
-                    <div>
-                        <div class="stat-label">Streak</div>
-                        <div class="stat-value" id="streak-count">0</div>
-                    </div>
-                </div>
-
-                <div class="stat-item" title="Maior Combo">
-                    <div class="stat-badge best-bg">🏆</div>
-                    <div>
-                        <div class="stat-label">Recorde</div>
-                        <div class="stat-value" id="best-streak">0</div>
-                    </div>
+        <section class="game-card" aria-label="Área do Quiz">
+            
+            <!-- Left Side: Visual Dog Stage -->
+            <div class="game-stage">
+                <div class="image-wrapper" id="image-container">
+                    <div class="skeleton-loader" id="image-skeleton"></div>
+                    <img id="dog-image" src="" alt="Foto de um cachorro" class="dog-img">
+                    <div class="stage-tag"><span>🐶</span> Quem sou eu?</div>
                 </div>
             </div>
 
-            <button id="reset-stats" class="reset-btn" title="Zerar Pontuação">Zerar Placar</button>
-        </section>
-
-        <!-- Main Quiz Interface -->
-        <section class="quiz-card" aria-label="Área do Quiz">
-            <div class="quiz-header">
-                <h1 class="quiz-title">Qual é a raça do cachorro? 🐕</h1>
-
-                <div class="mode-selector">
-                    <button id="mode-choice" class="mode-btn active">Múltipla Escolha</button>
-                    <button id="mode-input" class="mode-btn">Digitação</button>
+            <!-- Right Side: Interactive Controls & Choices -->
+            <div class="game-controls">
+                
+                <!-- Card Header with Title & Mode Selector -->
+                <div class="controls-header">
+                    <h1 class="quiz-title">Qual é a raça?</h1>
+                    <div class="mode-selector">
+                        <button id="mode-choice" class="mode-btn active" title="Alternativas">Múltipla Escolha</button>
+                        <button id="mode-input" class="mode-btn" title="Digitar nome">Digitação</button>
+                    </div>
                 </div>
-            </div>
 
-            <!-- Dog Photo Container -->
-            <div class="image-wrapper" id="image-container">
-                <div class="skeleton-loader" id="image-skeleton"></div>
-                <img id="dog-image" src="" alt="Foto de um cachorro" class="dog-img">
-            </div>
+                <!-- Multiple Choice Grid (Mode 1) -->
+                <div id="options-container" class="options-grid">
+                    <!-- Option buttons dynamically generated with keyboard badges in app.js -->
+                </div>
 
-            <!-- Multiple Choice Grid -->
-            <div id="options-container" class="options-grid">
-                <!-- Option buttons generated dynamically via app.js -->
-            </div>
+                <!-- Text Input Guessing Box (Mode 2) -->
+                <div id="text-input-container" class="text-input-box hidden">
+                    <div class="input-group">
+                        <input type="text" id="guess-input" placeholder="Digite o nome da raça..."
+                            class="breed-input" autocomplete="off" spellcheck="false">
+                        <button id="guess-button" class="submit-btn">
+                            <span>Adivinhar</span>
+                            <span class="key-shortcut">↵</span>
+                        </button>
+                    </div>
+                    <span class="input-tip">Dica: Você pode digitar sem acentos ou nomes parciais</span>
+                </div>
 
-            <!-- Text Input Guessing Box (Hidden by default) -->
-            <div id="text-input-container" class="text-input-box hidden">
-                <input type="text" id="guess-input" placeholder="Digite a raça (ex: Pastor Alemão, Golden Retriever)..."
-                    class="breed-input" autocomplete="off">
-                <button id="guess-button" class="submit-btn">Adivinhar</button>
-            </div>
+                <!-- Feedback Message Banner -->
+                <div id="feedback-msg" class="feedback-msg"></div>
 
-            <!-- Feedback Message Area -->
-            <div id="feedback-msg" class="feedback-msg"></div>
+                <!-- Action Buttons: Hint & Skip/Next -->
+                <div class="action-bar">
+                    <button id="hint-button" class="btn-action" title="Eliminar 2 opções ou ver dica inicial (Tecla H)">
+                        <span class="btn-icon">💡</span>
+                        <span>Dica</span>
+                        <span class="kbd-badge">H</span>
+                    </button>
+                    <button id="next-button" class="btn-action btn-skip" title="Mudar cachorro / Pular rodada (Tecla Espaço)">
+                        <span class="btn-icon">🔄</span>
+                        <span>Pular / Próximo</span>
+                        <span class="kbd-badge">Espaço</span>
+                    </button>
+                </div>
 
-            <!-- Quiz Controls Bar -->
-            <div class="action-bar">
-                <button id="hint-button" class="btn-secondary">
-                    <span>💡</span> Obter Dica
-                </button>
-                <button id="next-button" class="btn-secondary">
-                    <span>🔄</span> Mudar Cachorro
-                </button>
+                <!-- Keyboard shortcuts mini bar -->
+                <div class="shortcuts-helper">
+                    <span>⌨️ <strong>Atalhos:</strong> [1-4] Escolher • [H] Dica • [Espaço] Próximo • [↵] Enviar</span>
+                </div>
+
             </div>
         </section>
-
     </main>
 
     <!-- Footer -->

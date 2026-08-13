@@ -1,6 +1,7 @@
 /**
  * QuizDOG - Main Application Script
- * Dynamic dog breed guessing game with Dog CEO API integration and Brazilian Portuguese translations.
+ * Dynamic dog breed guessing game with Dog CEO API integration, Brazilian Portuguese translations,
+ * Keyboard shortcuts, Dark/Light theme switching, and Arcade/Gamer experience.
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -60,6 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         'collie-border': 'Border Collie',
         'border-collie': 'Border Collie',
+        'collie': 'Collie',
         'basset': 'Basset Hound',
         'basset-hound': 'Basset Hound',
         'spaniel-cocker': 'Cocker Spaniel',
@@ -96,7 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'terrier-silky': 'Terrier Sedoso',
         'terrier-patterdale': 'Patterdale Terrier',
         
-        'sheepdog-shetland': 'Pastor Shetland',
+        'sheepdog-shetland': 'Pastor de Shetland',
         'sheepdog-english': 'Old English Sheepdog',
         
         'mountain-bernese': 'Bernese (Boiadeiro Bernês)',
@@ -159,12 +161,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const scoreWrongEl = document.getElementById('score-wrong');
     const streakEl = document.getElementById('streak-count');
     const bestStreakEl = document.getElementById('best-streak');
+    const streakPill = document.getElementById('streak-pill');
     const resetStatsBtn = document.getElementById('reset-stats');
 
-    // Controls
+    // Controls & Header
     const modeChoiceBtn = document.getElementById('mode-choice');
     const modeInputBtn = document.getElementById('mode-input');
     const soundToggleBtn = document.getElementById('sound-toggle');
+    const themeToggleBtn = document.getElementById('theme-toggle');
 
     // State Variables
     let allBreedsList = [];
@@ -174,6 +178,9 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentGameMode = 'choice'; // 'choice' or 'input'
     let isAnswered = false;
     let hintUsed = false;
+
+    // Theme state
+    let currentTheme = localStorage.getItem('quizdog_theme') || 'light';
 
     // Scores & Stats
     let stats = {
@@ -201,6 +208,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // INITIALIZATION
     // ==========================================
     function init() {
+        applyTheme(currentTheme);
         updateSoundButtonIcon();
         updateStatsUI();
         setupEventListeners();
@@ -209,12 +217,59 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // ==========================================
+    // THEME SYSTEM
+    // ==========================================
+    function applyTheme(theme) {
+        currentTheme = theme;
+        if (theme === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        } else {
+            document.documentElement.removeAttribute('data-theme');
+        }
+        localStorage.setItem('quizdog_theme', theme);
+        updateThemeButtonIcon();
+    }
+
+    function toggleTheme() {
+        const nextTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        applyTheme(nextTheme);
+        if (window.quizSounds) window.quizSounds.playClick();
+    }
+
+    function updateThemeButtonIcon() {
+        if (!themeToggleBtn) return;
+        if (currentTheme === 'dark') {
+            // Sun icon (click for light)
+            themeToggleBtn.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="5"/>
+                    <line x1="12" y1="1" x2="12" y2="3"/>
+                    <line x1="12" y1="21" x2="12" y2="23"/>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                    <line x1="1" y1="12" x2="3" y2="12"/>
+                    <line x1="21" y1="12" x2="23" y2="12"/>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                </svg>`;
+        } else {
+            // Moon icon (click for dark)
+            themeToggleBtn.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                </svg>`;
+        }
+    }
+
     function updateSoundButtonIcon() {
         if (!soundToggleBtn) return;
-        const muted = window.quizSounds.isMuted();
+        const muted = window.quizSounds ? window.quizSounds.isMuted() : false;
         soundToggleBtn.innerHTML = muted
-            ? '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>'
-            : '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>';
+            ? '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>'
+            : '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>';
     }
 
     // ==========================================
@@ -345,12 +400,16 @@ document.addEventListener('DOMContentLoaded', () => {
         // Shuffle options
         currentOptions.sort(() => Math.random() - 0.5);
 
-        // Render buttons
-        currentOptions.forEach(rawOption => {
+        // Render buttons with keyboard shortcut badges [1], [2], [3], [4]
+        currentOptions.forEach((rawOption, idx) => {
             const btn = document.createElement('button');
             btn.className = 'option-btn';
             btn.dataset.breed = rawOption;
-            btn.textContent = formatBreedName(rawOption);
+            btn.dataset.index = idx;
+            btn.innerHTML = `
+                <span class="key-badge">${idx + 1}</span>
+                <span class="breed-text">${formatBreedName(rawOption)}</span>
+            `;
             btn.addEventListener('click', () => handleOptionSelect(rawOption, btn));
             optionsContainer.appendChild(btn);
         });
@@ -448,7 +507,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         setTimeout(() => {
             loadNextDog();
-        }, 2200);
+        }, 2100);
     }
 
     function processWrongAnswer() {
@@ -457,21 +516,21 @@ document.addEventListener('DOMContentLoaded', () => {
         saveStats();
         updateStatsUI();
 
-        feedbackMsg.textContent = `❌ Ops! Na verdade era um ${currentFormattedBreed}.`;
+        feedbackMsg.textContent = `❌ Ops! Na verdade é um ${currentFormattedBreed}.`;
         feedbackMsg.className = 'feedback-msg error-anim';
 
         window.quizSounds.playWrong();
 
         setTimeout(() => {
             loadNextDog();
-        }, 2600);
+        }, 2500);
     }
 
     function handleHint() {
         if (isAnswered || hintUsed) return;
         hintUsed = true;
         hintButton.disabled = true;
-        window.quizSounds.playClick();
+        if (window.quizSounds) window.quizSounds.playClick();
 
         if (currentGameMode === 'choice') {
             const optionBtns = Array.from(optionsContainer.querySelectorAll('.option-btn'));
@@ -503,6 +562,14 @@ document.addEventListener('DOMContentLoaded', () => {
         scoreWrongEl.textContent = stats.wrong;
         streakEl.textContent = stats.streak;
         bestStreakEl.textContent = stats.bestStreak;
+
+        if (streakPill) {
+            if (stats.streak >= 3) {
+                streakPill.classList.add('streak-fire');
+            } else {
+                streakPill.classList.remove('streak-fire');
+            }
+        }
     }
 
     function resetStats() {
@@ -510,7 +577,7 @@ document.addEventListener('DOMContentLoaded', () => {
             stats = { correct: 0, wrong: 0, streak: 0, bestStreak: 0 };
             saveStats();
             updateStatsUI();
-            window.quizSounds.playClick();
+            if (window.quizSounds) window.quizSounds.playClick();
         }
     }
 
@@ -520,7 +587,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function triggerConfetti() {
         if (!ctx) return;
         confettiParticles = [];
-        const colors = ['#FF5964', '#FFD166', '#06D6A0', '#118AB2', '#073B4C', '#FF9F1C'];
+        const colors = ['#FF5757', '#FFD166', '#06D6A0', '#118AB2', '#6366F1', '#FF9F1C'];
         
         for (let i = 0; i < 70; i++) {
             confettiParticles.push({
@@ -570,7 +637,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // EVENT LISTENERS
+    // KEYBOARD SHORTCUTS & EVENT LISTENERS
     // ==========================================
     function setupEventListeners() {
         // Mode Switches
@@ -581,7 +648,7 @@ document.addEventListener('DOMContentLoaded', () => {
             modeInputBtn.classList.remove('active');
             optionsContainer.classList.remove('hidden');
             textInputContainer.classList.add('hidden');
-            window.quizSounds.playClick();
+            if (window.quizSounds) window.quizSounds.playClick();
         });
 
         modeInputBtn.addEventListener('click', () => {
@@ -591,35 +658,75 @@ document.addEventListener('DOMContentLoaded', () => {
             modeChoiceBtn.classList.remove('active');
             optionsContainer.classList.add('hidden');
             textInputContainer.classList.remove('hidden');
-            window.quizSounds.playClick();
+            if (window.quizSounds) window.quizSounds.playClick();
+            guessInput.focus();
         });
 
         // Controls
         nextButton.addEventListener('click', () => {
-            window.quizSounds.playClick();
+            if (window.quizSounds) window.quizSounds.playClick();
             loadNextDog();
         });
 
         hintButton.addEventListener('click', handleHint);
 
         guessButton.addEventListener('click', () => {
-            window.quizSounds.playClick();
+            if (window.quizSounds) window.quizSounds.playClick();
             handleTextGuess();
         });
 
         guessInput.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
+                e.preventDefault();
                 handleTextGuess();
             }
         });
 
+        // Theme Toggle
+        themeToggleBtn.addEventListener('click', toggleTheme);
+
+        // Sound Toggle
         soundToggleBtn.addEventListener('click', () => {
-            window.quizSounds.toggleMute();
-            updateSoundButtonIcon();
-            window.quizSounds.playClick();
+            if (window.quizSounds) {
+                window.quizSounds.toggleMute();
+                updateSoundButtonIcon();
+                window.quizSounds.playClick();
+            }
         });
 
         resetStatsBtn.addEventListener('click', resetStats);
+
+        // Global Keyboard Gamer Shortcuts
+        window.addEventListener('keydown', (e) => {
+            const isTyping = document.activeElement === guessInput;
+
+            // If user is actively typing in the text input, let them type normally
+            if (isTyping) {
+                return;
+            }
+
+            // Key 1, 2, 3, 4 for multiple choice options
+            if (currentGameMode === 'choice' && ['1', '2', '3', '4'].includes(e.key)) {
+                const optIndex = parseInt(e.key, 10) - 1;
+                const buttons = optionsContainer.querySelectorAll('.option-btn');
+                if (buttons[optIndex] && !buttons[optIndex].disabled) {
+                    buttons[optIndex].click();
+                }
+            }
+
+            // Key H for Hint
+            if (e.key.toLowerCase() === 'h') {
+                if (!hintButton.disabled) {
+                    hintButton.click();
+                }
+            }
+
+            // Space or N to Skip / Next dog
+            if (e.key === ' ' || e.key.toLowerCase() === 'n') {
+                e.preventDefault();
+                nextButton.click();
+            }
+        });
     }
 
     // Start App
